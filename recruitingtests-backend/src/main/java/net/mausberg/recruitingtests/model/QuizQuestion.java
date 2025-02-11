@@ -1,9 +1,6 @@
 package net.mausberg.recruitingtests.model;
 
-import java.util.ArrayList;
-
 import java.util.List;
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,12 +14,13 @@ public class QuizQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
     private int complexity;
     private String question;
 
-    @ElementCollection
-    private List<String> options = new ArrayList<>(5);
-    private int correctAnswer;
-
+    @OneToMany(mappedBy = "quizQuestion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Option> options;
 }
