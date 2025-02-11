@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-import net.mausberg.authentication_framework_backend.model.AppUser;
+import net.mausberg.recruitingtests.model.QuizQuestion;
 
 
 @SpringBootApplication
@@ -13,7 +13,7 @@ public class RecruitingtestsApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RecruitingtestsApplication.class, args);
-		AppUser user = new AppUser();
+		QuizQuestion qq = new QuizQuestion();
 	}
 
 }

@@ -22,7 +22,7 @@
 	<repositories>
 		<repository>
 			<id>github</id>
-			<url>https://maven.pkg.github.com/fmausberg/authentication-frameworkpackages/2400352</url>
+			<url>https://maven.pkg.github.com/fmausberg/authentication-framework/packages/2400352</url>
 		</repository>
 	</repositories>
 	
