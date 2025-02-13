@@ -16,6 +16,8 @@ public class Option {
 
     private String text;
 
+    private String link;
+
     private boolean isCorrect;
 
     @ManyToOne
