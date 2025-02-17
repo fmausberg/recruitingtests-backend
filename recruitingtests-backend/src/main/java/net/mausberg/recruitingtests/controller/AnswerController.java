@@ -3,18 +3,21 @@ package net.mausberg.recruitingtests.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import net.mausberg.authentication_framework_backend.service.AppUserService;
+import net.mausberg.recruitingtests.dto.AnswerDTO;
 import net.mausberg.recruitingtests.model.Answer;
 import net.mausberg.recruitingtests.service.AnswerService;
-import net.mausberg.authentication_framework_backend.model.AppUser;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/answers")
+@RequestMapping("/api/v0/answers")
 public class AnswerController {
 
     @Autowired
     private AnswerService answerService;
+    private AppUserService appUserService;
 
     @GetMapping
     public List<Answer> getAllAnswers() {
@@ -28,10 +31,8 @@ public class AnswerController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Answer>> getAnswersByAppUser(@PathVariable Long userId) {
-        AppUser appUser = new AppUser();
-        appUser.setId(userId);
-        List<Answer> answers = answerService.getAnswersByAppUser(appUser);
+    public ResponseEntity<List<AnswerDTO>> getAnswersByAppUser(@PathVariable Long userId) {
+        List<AnswerDTO> answers = answerService.getAnswersByAppUserId(userId);
         return ResponseEntity.ok(answers);
     }
 

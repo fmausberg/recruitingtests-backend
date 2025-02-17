@@ -26,7 +26,10 @@ public class Answer {
     @JoinColumn(name = "app_user_id")
     private AppUser appUser;
 
-    private int answer;
+    @ManyToOne
+    @JoinColumn(name = "given_answer_id")
+    private Option givenAnswer; // Changed from int to Option
+
     private long timeTaken;
 
 }

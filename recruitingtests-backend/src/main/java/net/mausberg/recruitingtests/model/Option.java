@@ -1,5 +1,7 @@
 package net.mausberg.recruitingtests.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,5 +24,6 @@ public class Option {
 
     @ManyToOne
     @JoinColumn(name = "quiz_question_id")
+    @JsonIgnore
     private QuizQuestion quizQuestion;
 }
