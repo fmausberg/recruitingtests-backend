@@ -63,7 +63,7 @@
 		<dependency>
 			<groupId>net.mausberg</groupId>
 			<artifactId>authentication-framework-backend</artifactId>
-			<version>0.1.2</version>
+			<version>0.2.2</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

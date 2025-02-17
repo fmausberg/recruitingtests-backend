@@ -1,5 +1,7 @@
 package net.mausberg.recruitingtests.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,9 +18,12 @@ public class Option {
 
     private String text;
 
+    private String link;
+
     private boolean isCorrect;
 
     @ManyToOne
     @JoinColumn(name = "quiz_question_id")
+    @JsonIgnore
     private QuizQuestion quizQuestion;
 }

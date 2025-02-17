@@ -20,6 +20,7 @@ public class QuizQuestion {
 
     private int complexity;
     private String question;
+    private String link;
 
     @OneToMany(mappedBy = "quizQuestion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Option> options;
