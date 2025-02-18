@@ -11,6 +11,8 @@ public class QuestionDTO {
     private int complexity;
     private String question;
     private String link;
+    private long totalAnswers; // total amount of answers given to this question
     private double avgTimeTaken; // average time taken value of answers referencing to this question
     private double avgRight; // average of right answers given to this question
+    private double difficulty;
 }
