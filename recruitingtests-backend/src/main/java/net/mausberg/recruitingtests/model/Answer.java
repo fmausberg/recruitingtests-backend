@@ -1,6 +1,6 @@
 package net.mausberg.recruitingtests.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,7 +16,7 @@ public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date timestamp;
+    private LocalDateTime timestamp;
     
     @ManyToOne
     @JoinColumn(name = "question_id")
@@ -28,8 +28,14 @@ public class Answer {
 
     @ManyToOne
     @JoinColumn(name = "given_answer_id")
-    private Option givenAnswer; // Changed from int to Option
+    private Option givenAnswer; 
 
     private long timeTaken;
 
+    private double scoreBefore;
+    private double scoreAfter; //users category score of the user after this answer
+    private long countUserAnswers; // aount of answers given by the user before this answer
+    private double difficultyBefore;
+    private double difficultyAfter; // difficulty of the question after this answer
+    private long countQuestionAnswers; // amount of answers given to this question before this answer
 }
