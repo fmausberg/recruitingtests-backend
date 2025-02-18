@@ -63,8 +63,13 @@
 		<dependency>
 			<groupId>net.mausberg</groupId>
 			<artifactId>authentication-framework-backend</artifactId>
-			<version>0.2.2</version>
+			<version>0.2.3</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.1.0</version>
 		</dependency>
 	</dependencies>
 
