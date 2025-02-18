@@ -1,6 +1,7 @@
 package net.mausberg.recruitingtests.repository;
 
 import net.mausberg.recruitingtests.model.Answer;
+import net.mausberg.recruitingtests.model.Category;
 import net.mausberg.recruitingtests.model.Question;
 import net.mausberg.authentication_framework_backend.model.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -49,15 +50,14 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
     List<Answer> findByAppUserId(Long userId);
     
     /**
-     * Retrieves the most recent Answer for a given AppUser that was created before the specified timestamp.
+     * Retrieves the most recent Answer for a given AppUser that was created before the specified timestamp and belongs to a specific category.
      *
      * @param appUser the user for whom the answer is being retrieved
      * @param timestamp the cutoff timestamp; only answers created before this timestamp will be considered
-     * @return the most recent Answer for the given AppUser created before the specified timestamp, or null if no such answer exists
+     * @param category the category of the question associated with the answer
+     * @return the most recent Answer for the given AppUser created before the specified timestamp and belongs to the specified category, or null if no such answer exists
      */
-    Answer findTopByAppUserAndTimestampBeforeOrderByTimestampDesc(AppUser appUser, LocalDateTime timestamp);
-
-    
+    Answer findTopByAppUserAndTimestampBeforeAndQuestionCategoryOrderByTimestampDesc(AppUser appUser, LocalDateTime timestamp, Category category);
     /**
      * Finds the most recent Answer for a given Question before a specified timestamp.
      *
@@ -65,5 +65,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
      * @param timestamp the cutoff timestamp; only Answers before this timestamp are considered
      * @return the most recent Answer before the specified timestamp for the given Question
      */
-    Answer findTopByQuestionAndTimestampBeforeOrderByTimestampDesc(Question question, LocalDateTime timestamp);
+    Answer findTopByQuestionAndTimestampBeforeAndQuestionCategoryOrderByTimestampDesc(Question question, LocalDateTime timestamp, Category category);
 }
