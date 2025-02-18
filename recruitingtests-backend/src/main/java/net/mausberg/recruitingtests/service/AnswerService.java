@@ -96,8 +96,8 @@ public class AnswerService {
         answer.setDifficultyAfter(answerDTO.getDifficultyAfter());
         answer.setCountQuestionAnswers(answerDTO.getCountQuestionAnswers());
          
-        Answer previousUserAnswer = answerRepository.findTopByAppUserAndTimestampBeforeOrderByTimestampDesc(answer.getAppUser(), answer.getTimestamp());
-        Answer previousQuestionAnswer = answerRepository.findTopByQuestionAndTimestampBeforeOrderByTimestampDesc(answer.getQuestion(), answer.getTimestamp());
+        Answer previousUserAnswer = answerRepository.findTopByAppUserAndTimestampBeforeAndQuestionCategoryOrderByTimestampDesc(answer.getAppUser(), answer.getTimestamp(), answer.getQuestion().getCategory());
+        Answer previousQuestionAnswer = answerRepository.findTopByQuestionAndTimestampBeforeAndQuestionCategoryOrderByTimestampDesc(answer.getQuestion(), answer.getTimestamp(), answer.getQuestion().getCategory());
         double correctness = answer.getGivenAnswer().isCorrect() ? 1.0 : 0.0;
 
         // Check if this is the first answer by the user
