@@ -8,8 +8,10 @@ import net.mausberg.recruitingtests.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -41,15 +43,26 @@ public class QuestionService {
     }
 
     private QuestionDTO convertToDTO(Question question) {
-        double avgTimeTaken = question.getOptions().stream()
+        List<Long> timeTakens = question.getOptions().stream()
                 .flatMap(option -> option.getAnswers().stream())
-                .mapToLong(answer -> answer.getTimeTaken())
-                .average()
-                .orElse(0.0);
+                .map(Answer::getTimeTaken)
+                .sorted()
+                .collect(Collectors.toList());
 
-        long totalAnswers = question.getOptions().stream()
-                .flatMap(option -> option.getAnswers().stream())
-                .count();
+        DoubleSummaryStatistics stats = timeTakens.stream()
+                .mapToDouble(Long::doubleValue)
+                .summaryStatistics();
+
+        double avgTimeTaken = stats.getAverage();
+        double minTimeTaken = stats.getMin();
+        double maxTimeTaken = stats.getMax();
+        double medianTimeTaken = calculatePercentile(timeTakens, 50);
+        double percentile10TimeTaken = calculatePercentile(timeTakens, 10);
+        double percentile25TimeTaken = calculatePercentile(timeTakens, 25);
+        double percentile75TimeTaken = calculatePercentile(timeTakens, 75);
+        double percentile90TimeTaken = calculatePercentile(timeTakens, 90);
+
+        long totalAnswers = timeTakens.size();
 
         double avgRight = totalAnswers > 0 ? question.getOptions().stream()
                 .flatMap(option -> option.getAnswers().stream())
@@ -68,8 +81,23 @@ public class QuestionService {
                 question.getLink(),
                 totalAnswers,
                 avgTimeTaken,
+                medianTimeTaken,
+                minTimeTaken,
+                maxTimeTaken,
+                percentile10TimeTaken,
+                percentile25TimeTaken,
+                percentile75TimeTaken,
+                percentile90TimeTaken,
                 avgRight,
                 difficulty
         );
+    }
+
+    private double calculatePercentile(List<Long> sortedValues, double percentile) {
+        if (sortedValues.isEmpty()) {
+            return 0.0;
+        }
+        int index = (int) Math.ceil(percentile / 100.0 * sortedValues.size());
+        return sortedValues.get(index - 1);
     }
 }
