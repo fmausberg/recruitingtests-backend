@@ -23,12 +23,10 @@
 hs_err_pid*
 replay_pid*
 
+# Environment variables
 .env
 
-
-############### lower gitignore
-
-HELP.md
+# Maven target directory
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
