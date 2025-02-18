@@ -13,6 +13,13 @@ public class QuestionDTO {
     private String link;
     private long totalAnswers; // total amount of answers given to this question
     private double avgTimeTaken; // average time taken value of answers referencing to this question
+    private double medianTimeTaken;
+    private double minTimeTaken;
+    private double maxTimeTaken;
+    private double percentile10TimeTaken;
+    private double percentile25TimeTaken;
+    private double percentile75TimeTaken;
+    private double percentile90TimeTaken;
     private double avgRight; // average of right answers given to this question
     private double difficulty;
 }
