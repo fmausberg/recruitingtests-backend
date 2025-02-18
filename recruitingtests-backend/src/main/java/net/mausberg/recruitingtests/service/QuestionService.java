@@ -1,7 +1,9 @@
 package net.mausberg.recruitingtests.service;
 
 import net.mausberg.recruitingtests.dto.QuestionDTO;
+import net.mausberg.recruitingtests.model.Answer;
 import net.mausberg.recruitingtests.model.Question;
+import net.mausberg.recruitingtests.repository.AnswerRepository;
 import net.mausberg.recruitingtests.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,9 @@ public class QuestionService {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
 
     public List<Question> getAllQuestions() {
         return questionRepository.findAll();
@@ -51,14 +56,20 @@ public class QuestionService {
                 .filter(answer -> answer.getGivenAnswer().isCorrect())
                 .count() / (double) totalAnswers : 0.0;
 
+        // Calculate difficulty based on the last answer's difficulty for this question
+        Answer lastAnswer = answerRepository.findTopByQuestionOrderByTimestampDesc(question);
+        double difficulty = lastAnswer != null ? lastAnswer.getDifficultyAfter() : 0.5; // Default to 0.5 if no answers
+
         return new QuestionDTO(
                 question.getId(),
                 question.getCategory().name(),
                 question.getComplexity(),
                 question.getQuestion(),
                 question.getLink(),
+                totalAnswers,
                 avgTimeTaken,
-                avgRight
+                avgRight,
+                difficulty
         );
     }
 }

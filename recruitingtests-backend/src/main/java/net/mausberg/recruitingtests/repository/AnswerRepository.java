@@ -66,4 +66,12 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
      * @return the most recent Answer before the specified timestamp for the given Question
      */
     Answer findTopByQuestionAndTimestampBeforeAndQuestionCategoryOrderByTimestampDesc(Question question, LocalDateTime timestamp, Category category);
+
+    /**
+     * Finds the most recent answer for the given question.
+     *
+     * @param question the question for which to find the most recent answer
+     * @return the most recent answer for the given question, or {@code null} if no answer is found
+     */
+    Answer findTopByQuestionOrderByTimestampDesc(Question question); 
 }
