@@ -84,7 +84,7 @@ public class AnswerService {
 
         Answer answer = new Answer();
         answer.setId(answerDTO.getId());
-        answer.setTimestamp(answerDTO.getTimestamp());
+        answer.setTimestamp(java.time.LocalDateTime.now());
         answer.setQuestion(question);
         answer.setAppUser(appUser);
         answer.setGivenAnswer(givenAnswer);
@@ -95,7 +95,7 @@ public class AnswerService {
         answer.setDifficultyBefore(answerDTO.getDifficultyBefore());
         answer.setDifficultyAfter(answerDTO.getDifficultyAfter());
         answer.setCountQuestionAnswers(answerDTO.getCountQuestionAnswers());
-
+         
         Answer previousUserAnswer = answerRepository.findTopByAppUserAndTimestampBeforeOrderByTimestampDesc(answer.getAppUser(), answer.getTimestamp());
         Answer previousQuestionAnswer = answerRepository.findTopByQuestionAndTimestampBeforeOrderByTimestampDesc(answer.getQuestion(), answer.getTimestamp());
         double correctness = answer.getGivenAnswer().isCorrect() ? 1.0 : 0.0;
