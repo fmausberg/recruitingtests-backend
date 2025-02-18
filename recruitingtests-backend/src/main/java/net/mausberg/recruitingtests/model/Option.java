@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -23,7 +25,11 @@ public class Option {
     private boolean isCorrect;
 
     @ManyToOne
-    @JoinColumn(name = "quiz_question_id")
+    @JoinColumn(name = "question_id")
     @JsonIgnore
-    private QuizQuestion quizQuestion;
+    private Question question;
+
+    @OneToMany(mappedBy = "givenAnswer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Answer> answers; // Add this line to establish the relationship with Answer
 }

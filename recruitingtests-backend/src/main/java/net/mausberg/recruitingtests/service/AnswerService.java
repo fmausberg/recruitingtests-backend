@@ -37,14 +37,14 @@ public class AnswerService {
         AnswerDTO dto = new AnswerDTO();
         dto.setId(answer.getId());
         dto.setTimestamp(answer.getTimestamp().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        dto.setComplexity(answer.getQuizQuestion().getComplexity());
-        dto.setCategory(answer.getQuizQuestion().getCategory().name());
-        dto.setQuizQuestionId(answer.getQuizQuestion().getId());
-        dto.setQuizQuestion(answer.getQuizQuestion().getQuestion());
+        dto.setComplexity(answer.getQuestion().getComplexity());
+        dto.setCategory(answer.getQuestion().getCategory().name());
+        dto.setQuestionId(answer.getQuestion().getId());
+        dto.setQuestion(answer.getQuestion().getQuestion());
         dto.setAppUserId(answer.getAppUser().getId());
         dto.setGivenAnswer(answer.getGivenAnswer().getId());
 
-        Option correctOption = answer.getQuizQuestion().getOptions().stream()
+        Option correctOption = answer.getQuestion().getOptions().stream()
                 .filter(Option::isCorrect)
                 .findFirst()
                 .orElse(null);

@@ -19,8 +19,8 @@ public class Answer {
     private Date timestamp;
     
     @ManyToOne
-    @JoinColumn(name = "quiz_question_id")
-    private QuizQuestion quizQuestion;
+    @JoinColumn(name = "question_id")
+    private Question question;
     
     @ManyToOne
     @JoinColumn(name = "app_user_id")
