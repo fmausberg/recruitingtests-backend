@@ -5,11 +5,14 @@ import org.springframework.stereotype.Service;
 
 import net.mausberg.recruitingtests.dto.AnswerDTO;
 import net.mausberg.recruitingtests.model.Answer;
-import net.mausberg.recruitingtests.repository.AnswerRepository;
-import net.mausberg.authentication_framework_backend.model.AppUser;
 import net.mausberg.recruitingtests.model.Option;
+import net.mausberg.recruitingtests.model.Question;
+import net.mausberg.recruitingtests.repository.AnswerRepository;
+import net.mausberg.recruitingtests.repository.OptionRepository;
+import net.mausberg.recruitingtests.repository.QuestionRepository;
+import net.mausberg.authentication_framework_backend.model.AppUser;
+import net.mausberg.authentication_framework_backend.repository.AppUserRepository;
 
-import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +21,15 @@ public class AnswerService {
 
     @Autowired
     private AnswerRepository answerRepository;
+
+    @Autowired
+    private AppUserRepository appUserRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private OptionRepository optionRepository;
 
     public List<Answer> getAllAnswers() {
         return answerRepository.findAll();
@@ -36,13 +48,13 @@ public class AnswerService {
     private AnswerDTO convertToDTO(Answer answer) {
         AnswerDTO dto = new AnswerDTO();
         dto.setId(answer.getId());
-        dto.setTimestamp(answer.getTimestamp().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        dto.setTimestamp(answer.getTimestamp());
         dto.setComplexity(answer.getQuestion().getComplexity());
         dto.setCategory(answer.getQuestion().getCategory().name());
         dto.setQuestionId(answer.getQuestion().getId());
         dto.setQuestion(answer.getQuestion().getQuestion());
         dto.setAppUserId(answer.getAppUser().getId());
-        dto.setGivenAnswer(answer.getGivenAnswer().getId());
+        dto.setGivenAnswerId(answer.getGivenAnswer().getId());
 
         Option correctOption = answer.getQuestion().getOptions().stream()
                 .filter(Option::isCorrect)
@@ -51,6 +63,12 @@ public class AnswerService {
         dto.setRightAnswer(correctOption != null ? correctOption.getId() : null);
         dto.setCorrect(answer.getGivenAnswer().isCorrect());
         dto.setTimeTaken(answer.getTimeTaken());
+        dto.setScoreBefore(answer.getScoreBefore());
+        dto.setScoreAfter(answer.getScoreAfter());
+        dto.setCountUserAnswers(answer.getCountUserAnswers());
+        dto.setDifficultyBefore(answer.getDifficultyBefore());
+        dto.setDifficultyAfter(answer.getDifficultyAfter());
+        dto.setCountQuestionAnswers(answer.getCountQuestionAnswers());
 
         return dto;
     }
@@ -59,13 +77,55 @@ public class AnswerService {
         return answerRepository.findById(id).orElse(null);
     }
 
-    public Answer saveAnswer(Answer answer) {
+    public Answer saveAnswer(AnswerDTO answerDTO) {
+        AppUser appUser = appUserRepository.findById(answerDTO.getAppUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+        Question question = questionRepository.findById(answerDTO.getQuestionId()).orElseThrow(() -> new RuntimeException("Question not found"));
+        Option givenAnswer = optionRepository.findById(answerDTO.getGivenAnswerId()).orElseThrow(() -> new RuntimeException("Option not found"));
+
+        Answer answer = new Answer();
+        answer.setId(answerDTO.getId());
+        answer.setTimestamp(answerDTO.getTimestamp());
+        answer.setQuestion(question);
+        answer.setAppUser(appUser);
+        answer.setGivenAnswer(givenAnswer);
+        answer.setTimeTaken(answerDTO.getTimeTaken());
+        answer.setScoreBefore(answerDTO.getScoreBefore());
+        answer.setScoreAfter(answerDTO.getScoreAfter());
+        answer.setCountUserAnswers(answerDTO.getCountUserAnswers());
+        answer.setDifficultyBefore(answerDTO.getDifficultyBefore());
+        answer.setDifficultyAfter(answerDTO.getDifficultyAfter());
+        answer.setCountQuestionAnswers(answerDTO.getCountQuestionAnswers());
+
+        Answer previousUserAnswer = answerRepository.findTopByAppUserAndTimestampBeforeOrderByTimestampDesc(answer.getAppUser(), answer.getTimestamp());
+        Answer previousQuestionAnswer = answerRepository.findTopByQuestionAndTimestampBeforeOrderByTimestampDesc(answer.getQuestion(), answer.getTimestamp());
+        double correctness = answer.getGivenAnswer().isCorrect() ? 1.0 : 0.0;
+
+        // Check if this is the first answer by the user
+        if (previousUserAnswer == null) {
+            answer.setScoreBefore(0.5);
+            answer.setCountUserAnswers(1);
+        } else {
+            answer.setScoreBefore(previousUserAnswer.getScoreAfter());
+            answer.setCountUserAnswers(previousUserAnswer.getCountUserAnswers() + 1);
+        }
+
+        // Check if this is the first answer to this question
+        if (previousQuestionAnswer == null) {
+            answer.setDifficultyBefore(0.5);
+            answer.setCountQuestionAnswers(1);
+        } else {
+            answer.setDifficultyBefore(previousQuestionAnswer.getDifficultyAfter());
+            answer.setCountQuestionAnswers(previousQuestionAnswer.getCountQuestionAnswers() + 1);
+        }
+
+        // calculation of score and difficulty after this answer
+        answer.setScoreAfter((answer.getCountUserAnswers() * answer.getScoreBefore() + correctness * answer.getDifficultyBefore()) / (answer.getCountUserAnswers() + answer.getDifficultyBefore()));
+        answer.setDifficultyAfter((answer.getCountQuestionAnswers() * answer.getDifficultyBefore() + (1 - correctness) * answer.getScoreBefore()) / (answer.getCountQuestionAnswers() + answer.getScoreBefore()));
+
         return answerRepository.save(answer);
     }
 
     public void deleteAnswer(Long id) {
         answerRepository.deleteById(id);
     }
-
-
 }
