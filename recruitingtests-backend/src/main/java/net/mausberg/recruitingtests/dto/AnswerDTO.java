@@ -12,8 +12,8 @@ public class AnswerDTO {
     private LocalDateTime timestamp;
     private int complexity;
     private String category;
-    private Long quizQuestionId;
-    private String quizQuestion;
+    private Long questionId;
+    private String question;
     private Long appUserId;
     private Long givenAnswer;
     private Long rightAnswer;
